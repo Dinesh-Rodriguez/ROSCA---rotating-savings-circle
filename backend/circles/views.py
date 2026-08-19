@@ -23,7 +23,7 @@ class RegisterView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         token, _ = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key}, status=status.HTTP_201_CREATED)
+        return Response({'token': token.key, 'user_id': user.id, 'username': user.username}, status=status.HTTP_201_CREATED)
 
 
 class LoginView(APIView):
@@ -36,7 +36,7 @@ class LoginView(APIView):
         if user is None:
             return Response({'detail': 'Invalid username or password.'}, status=status.HTTP_400_BAD_REQUEST)
         token, _ = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key})
+        return Response({'token': token.key, 'user_id': user.id, 'username': user.username})
 
 class CircleCreateView(APIView):
     permission_classes = [IsAuthenticated]
@@ -70,7 +70,9 @@ class CircleJoinView(APIView):
 class CircleDetailView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, pk):
-        circle = get_object_or_404(Circle.objects.prefetch_related('memberships__user'), pk=pk)
+        circle = get_object_or_404(
+            Circle.objects.prefetch_related('memberships__user', 'rounds__contributions'), pk=pk
+        )
         return Response(CircleSerializer(circle).data)
 
 
