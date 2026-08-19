@@ -16,8 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from circles.views import CircleCreateView, CircleDetailView, CircleJoinView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('circles.urls')),
+    path('api/circles/', CircleCreateView.as_view()),
+    path('api/circles/join/', CircleJoinView.as_view()),
+    path('api/circles/<int:pk>/', CircleDetailView.as_view()),
 ]
