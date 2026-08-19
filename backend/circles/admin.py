@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Circle, Contribution, Membership, Round
+
+admin.site.register([Circle, Membership, Round, Contribution])
